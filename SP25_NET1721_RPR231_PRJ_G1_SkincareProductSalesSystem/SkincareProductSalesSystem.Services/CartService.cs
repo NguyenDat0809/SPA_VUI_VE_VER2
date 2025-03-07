@@ -18,7 +18,7 @@ namespace SkincareProductSalesSystem.Services.ExtendServices
     {
         private readonly ICacheService _cacheService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
+        private int LIMIT_CART_COUNT = 100;
         public CartService(ICacheService cacheService, IHttpContextAccessor httpContextAccessor)
         {
             _cacheService = cacheService;
@@ -43,6 +43,8 @@ namespace SkincareProductSalesSystem.Services.ExtendServices
                 string key = $"cart:{userId}";
 
                 var cart = await _cacheService.GetDataAsync<List<string>>(key) ?? new List<string>();
+                if(cart.Count >= LIMIT_CART_COUNT)
+                    return new ServiceResult(403, "Giỏ hàng đã đạt giới hạn 100");
 
                 if (!cart.Contains(productId))
                 {
