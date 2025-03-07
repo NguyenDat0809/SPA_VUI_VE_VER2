@@ -6,16 +6,6 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
-  <ItemGroup>
-    <Protobuf Include="Protos\SkinTypesService.proto" GrpcServices="Server" />
-	 <Protobuf Include="Protos\AuthService.proto" GrpcServices="Server" />
-  <Protobuf Include="Protos\PromotionService.proto" GrpcServices="Server" />
-  </ItemGroup>
-	<ItemGroup>
-		<Protobuf Include="Protos\SkinTypesService.proto" GrpcServices="Server" />
-		<Protobuf Include="Protos\ProductGrpcProto.proto" GrpcServices="Server" />
-	</ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="Google.Protobuf" Version="3.29.3" />
