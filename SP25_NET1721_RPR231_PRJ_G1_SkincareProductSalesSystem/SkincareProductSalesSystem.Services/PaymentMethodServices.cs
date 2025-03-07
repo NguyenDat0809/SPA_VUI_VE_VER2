@@ -16,16 +16,16 @@ namespace SkincareProductSalesSystem.Services
     }
     public class PaymentMethodServices : IPaymentMethodServices
     {
-        private readonly PaymentMethodRepository _paymentMethodRepository;
+        private readonly UnitOfWork _unitOfWork;
 
-        public PaymentMethodServices(PaymentMethodRepository paymentMethodRepository)
+        public PaymentMethodServices()
         {
-            _paymentMethodRepository = paymentMethodRepository;
+            _unitOfWork ??= new UnitOfWork();
         }
 
         public async Task<IPaginate<PaymentMethod>> GetAll(int page, int size)
         {
-            return await _paymentMethodRepository.GetPagingListAsync(
+            return await _unitOfWork.PaymentMethodRepository.GetPagingListAsync(
                     size: size,
                     page: page
                 );
@@ -33,12 +33,12 @@ namespace SkincareProductSalesSystem.Services
 
         public async Task<PaymentMethod?> GetPaymentMethodById(string id)
         {
-            return await _paymentMethodRepository.GetByIdAsync(id);
+            return await _unitOfWork.PaymentMethodRepository.GetByIdAsync(id);
         }
 
         public async Task<PaymentMethod?> UpdatePaymentMethod(PaymentMethod paymentMethod)
         {
-            return ((await _paymentMethodRepository.UpdateAsync(paymentMethod)) > 0)? paymentMethod : null;
+            return ((await _unitOfWork.PaymentMethodRepository.UpdateAsync(paymentMethod)) > 0)? paymentMethod : null;
         }
     }
 }

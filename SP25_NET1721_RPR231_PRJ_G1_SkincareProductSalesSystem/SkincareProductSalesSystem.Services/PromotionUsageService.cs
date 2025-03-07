@@ -33,7 +33,7 @@ namespace SkincareProductSalesSystem.Services
 
 		public PromotionUsageService(UnitOfWork uOW, IMapper mapper)
 		{
-			_uOW = uOW;
+			_uOW ??= uOW;
 			_mapper = mapper;
 		}
 

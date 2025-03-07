@@ -2,11 +2,6 @@
 using SkincareProductSalesSystem.Repositories;
 using SkincareProductSalesSystem.Repositories.Models;
 using SkincareProductSalesSystem.Repositories.Paginate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SkincareProductSalesSystem.Services
 {
@@ -18,21 +13,21 @@ namespace SkincareProductSalesSystem.Services
     }
     public class OrderDetailServices : IOrderDetailServices
     {
-        private readonly OrderDetailRepository _orderDetailRepository;
+       private readonly UnitOfWork _unitOfWork;
 
-        public OrderDetailServices(OrderDetailRepository orderDetailRepository)
+        public OrderDetailServices()
         {
-            _orderDetailRepository = orderDetailRepository;
+           _unitOfWork ??= new UnitOfWork();
         }
 
         public async Task<OrderDetail?> CreateOrderDetail(OrderDetail newOrderDetail)
         {
-            return ((await _orderDetailRepository.CreateAsync(newOrderDetail)) > 0)? newOrderDetail : null;
+            return ((await _unitOfWork.OrderDetailRepository.CreateAsync(newOrderDetail)) > 0)? newOrderDetail : null;
         }
 
         public async Task<IPaginate<OrderDetail>> GetOrderDetailsByOrderId(int page, int size, string orderId)
         {
-            return await _orderDetailRepository.GetPagingListAsync(
+            return await _unitOfWork.OrderDetailRepository.GetPagingListAsync(
                     predicate: x => x.OrderId == orderId,
                     size: size,
                     page: page,
@@ -42,7 +37,7 @@ namespace SkincareProductSalesSystem.Services
 
         public async Task<OrderDetail?> UpdateOrderDetail(OrderDetail updateOrderDetail)
         {
-            return ((await _orderDetailRepository.UpdateAsync(updateOrderDetail)) > 0)? updateOrderDetail : null;
+            return ((await _unitOfWork.OrderDetailRepository.UpdateAsync(updateOrderDetail)) > 0)? updateOrderDetail : null;
         }
     }
 }

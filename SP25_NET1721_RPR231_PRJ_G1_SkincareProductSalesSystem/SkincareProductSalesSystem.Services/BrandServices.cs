@@ -1,4 +1,5 @@
-﻿using SkincareProductSalesSystem.Repositories.Models;
+﻿using Microsoft.AspNetCore.Http;
+using SkincareProductSalesSystem.Repositories.Models;
 using SkincareProductSalesSystem.Repositories.Repositories;
 using SkincareProductSalesSystem.Services.Base;
 
@@ -9,7 +10,7 @@ namespace SkincareProductSalesSystem.Services
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string ImageUrl { get; set; }
+        public IFormFile ImageUrl { get; set; }
         public string Status { get; set; }
     }
     public class UpdateBrandRequest : CreateBrandRequest

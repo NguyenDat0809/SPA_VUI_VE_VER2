@@ -48,6 +48,7 @@ namespace SkincareProductSalesSystem.Repositories
         public SkinCareRoutineRepository SkinCareRoutineRepository { get { return skinCareRoutineRepository ??= new SkinCareRoutineRepository(); } }
         public SkinTestRepository SkinTestRepository { get { return skinTestRepository ??= new SkinTestRepository(); } }
         public SkinTestOptionRepository SkinTestOptionRepository { get { return skinTestOptionRepository ??= new SkinTestOptionRepository(); } }
+        public PaymentRepository PaymentRepository { get { return paymentRepository ??= new PaymentRepository(); } }
 
         public SkinTypeRepository SkinTypeRepository { get { return skinTypeRepository ??= new SkinTypeRepository(); } }
         public UserRepository UserRepository { get { return userRepository ??= new UserRepository(); } }

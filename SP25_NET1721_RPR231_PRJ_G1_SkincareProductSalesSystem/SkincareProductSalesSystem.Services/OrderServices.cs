@@ -20,11 +20,11 @@ namespace SkincareProductSalesSystem.Services
     }
     public class OrderServices : IOrderServices
     {
-        private readonly OrderRepository _orderRepository;
+        private readonly UnitOfWork _unitOfWork;
 
         public OrderServices(OrderRepository orderRepository)
         {
-            _orderRepository = orderRepository;
+            _unitOfWork ??= new UnitOfWork();
         }
 
         public async Task<ServiceResult?> CreateOrder()
@@ -38,7 +38,7 @@ namespace SkincareProductSalesSystem.Services
                 UpdatedAt = DateTime.Now,
                 ShippingFee = 0,
             };
-            var isSuccessful = (await _orderRepository.CreateAsync(newOrder));
+            var isSuccessful = (await _unitOfWork.OrderRepository.CreateAsync(newOrder));
             return new ServiceResult
             {
                 Status = ((isSuccessful) > 0) ? 200 : 500,
@@ -49,7 +49,7 @@ namespace SkincareProductSalesSystem.Services
 
         public async Task<ServiceResult?> GetOrderById(string id)
         {
-            var response = await _orderRepository.GetByIdAsync(id);
+            var response = await _unitOfWork.OrderRepository.GetByIdAsync(id);
             return new ServiceResult
             {
                 Status = (response != null)? 200:500,
@@ -60,7 +60,7 @@ namespace SkincareProductSalesSystem.Services
 
         public async Task<ServiceResult> GetPagination(int page, int size)
         {
-            var responses = await _orderRepository.GetPagingListAsync(
+            var responses = await _unitOfWork.OrderRepository.GetPagingListAsync(
                 page: page,
                 size: size,
                 orderBy: x => x.OrderByDescending(x => x.OrderDate)
@@ -74,7 +74,7 @@ namespace SkincareProductSalesSystem.Services
         }
         public async Task<ServiceResult?> UpdateOrder(Order order)
         {
-            var isSuccessful = (await _orderRepository.UpdateAsync(order));
+            var isSuccessful = (await _unitOfWork.OrderRepository.UpdateAsync(order));
             return new ServiceResult
             {
                 Status = (isSuccessful > 0) ? 200 : 500,
