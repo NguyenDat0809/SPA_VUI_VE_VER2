@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SkincareProductSalesSystem.Services;
+
 
 namespace SkincareProductSalesSystem.Api.Controllers
 {
@@ -18,15 +18,34 @@ namespace SkincareProductSalesSystem.Api.Controllers
         [HttpGet("/brands")]
         public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int size = 10)
         {
-            var responses = await _brandService.GetPaginate(page, size);
-            return (responses != null) ? Ok(responses) : StatusCode(500);
+            var response = await _brandService.GetPaginate(page, size);
+            return StatusCode(response.Status, response);
         }
 
         [HttpGet("/brands/{id}")]
         public async Task<IActionResult> GetBrandById(string id)
         {
             var response = await _brandService.GetBrandById(id);
-            return (response != null)? Ok(response) : NotFound();
+            return StatusCode(response.Status, response);
+        }
+
+        [HttpPost("/brands")]
+        public async Task<IActionResult> CreateBrand(CreateBrandRequest request)
+        {
+            var response = await _brandService.CreateBrand(request);
+            return StatusCode(response.Status, response);
+        }
+        [HttpPut("/brands")]
+        public async Task<IActionResult> UpdateBrand(UpdateBrandRequest request)
+        {
+            var response = await _brandService.UpdateBrand(request);
+            return StatusCode(response.Status, response);
+        }
+        [HttpDelete("/brands/{id}")]
+        public async Task<IActionResult> UpdateBrand(string id)
+        {
+            var response = await _brandService.DeleteBrand(id);
+            return StatusCode(response.Status, response);
         }
     }
 }
