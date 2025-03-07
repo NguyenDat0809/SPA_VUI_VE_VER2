@@ -1,33 +1,103 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using SkincareProductSalesSystem.Services.Base;
 
-namespace SkincareProductSalesSystem.Services
+
+
+namespace SkincareProductSalesSystem.Services.ExtendServices
 {
     public interface ICartService
     {
-        bool IsItemExistInList<T>(string id, List<T> list) where T : class;
+        Task<IServiceResult> AddToCartAsync(string productId);
+        Task<IServiceResult> RemoveFromCartAsync(string productId);
+        Task<IServiceResult> GetUserCartAsync();
     }
-    public class CartService
+
+
+    public class CartService : ICartService
     {
-        public CartService() { }
-        public bool IsItemExistInList<T>(string id, List<T> list) where T : class
+        private readonly ICacheService _cacheService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public CartService(ICacheService cacheService, IHttpContextAccessor httpContextAccessor)
         {
-            if (list == null || list.Count == 0) return false;
-
-            var property = typeof(T).GetProperty("id");
-            if (property == null) throw new ArgumentException("T must have an 'id' property");
-
-            foreach (var item in list)
-            {
-                var itemId = property.GetValue(item)?.ToString();
-                if (itemId != null && itemId.Equals(id)) return true;
-            }
-
-            return false;
+            _cacheService = cacheService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
+        private string GetUserId()
+        {
+            var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("Người dùng chưa được cấp quyền");
+            }
+            return userId;
+        }
+
+        public async Task<IServiceResult> AddToCartAsync(string productId)
+        {
+            try
+            {
+                string userId = GetUserId();
+                string key = $"cart:{userId}";
+
+                var cart = await _cacheService.GetDataAsync<List<string>>(key) ?? new List<string>();
+
+                if (!cart.Contains(productId))
+                {
+                    cart.Add(productId);
+                    await _cacheService.SetDataAsync(key, cart);
+                }
+                return new ServiceResult(200, "Thành công", cart);
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                return new ServiceResult(401, e.Message);
+            }
+
+        }
+
+        public async Task<IServiceResult> RemoveFromCartAsync(string productId)
+        {
+            try
+            {
+                string userId = GetUserId();
+                string key = $"cart:{userId}";
+
+                var cart = await _cacheService.GetDataAsync<List<string>>(key);
+                if (cart == null || !cart.Contains(productId)) return new ServiceResult(400, "Không tìm thấy sản phẩm trong giỏ hàng");
+
+                cart.Remove(productId);
+                await _cacheService.SetDataAsync(key, cart);
+
+                return new ServiceResult(200, "Thành công");
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                return new ServiceResult(401, e.Message);
+            }
+        }
+
+        public async Task<IServiceResult> GetUserCartAsync()
+        {
+            try
+            {
+                string userId = GetUserId();
+                string key = $"cart:{userId}";
+                var cartData = await _cacheService.GetDataAsync<List<string>>(key) ?? new List<string>();
+                return new ServiceResult
+                {
+                    Status = 200,
+                    Message = "Thành công",
+                    Data = cartData
+                };
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                return new ServiceResult(401, e.Message);
+            }
+        }
     }
 }
+
