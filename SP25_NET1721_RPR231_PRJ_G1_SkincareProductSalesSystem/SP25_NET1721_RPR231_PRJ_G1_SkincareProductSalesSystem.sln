@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkincareProductSalesSystem.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkincareProductSalesSystem.Api", "SkincareProductSalesSystem.Api\SkincareProductSalesSystem.Api.csproj", "{E3FEE781-276A-4EB0-8FB3-E6AA5D92C181}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkincareProductSalesSystem.RazorWebApp", "SkincareProductSalesSystem.RazorWebApp\SkincareProductSalesSystem.RazorWebApp.csproj", "{65C1B1B0-CB94-4AE2-A4D2-4FADA3359F47}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkincareProductSalesSystem.Common", "SkincareProductSalesSystem.Common\SkincareProductSalesSystem.Common.csproj", "{896F97CC-AD16-4E05-B342-E17CE4202D04}"
 EndProject
 Global
@@ -31,10 +29,6 @@ Global
 		{E3FEE781-276A-4EB0-8FB3-E6AA5D92C181}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3FEE781-276A-4EB0-8FB3-E6AA5D92C181}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3FEE781-276A-4EB0-8FB3-E6AA5D92C181}.Release|Any CPU.Build.0 = Release|Any CPU
-		{65C1B1B0-CB94-4AE2-A4D2-4FADA3359F47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{65C1B1B0-CB94-4AE2-A4D2-4FADA3359F47}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{65C1B1B0-CB94-4AE2-A4D2-4FADA3359F47}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{65C1B1B0-CB94-4AE2-A4D2-4FADA3359F47}.Release|Any CPU.Build.0 = Release|Any CPU
 		{896F97CC-AD16-4E05-B342-E17CE4202D04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{896F97CC-AD16-4E05-B342-E17CE4202D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{896F97CC-AD16-4E05-B342-E17CE4202D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
