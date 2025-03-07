@@ -1,23 +1,28 @@
-﻿using Azure;
-using SkincareProductSalesSystem.Repositories.Models;
-using SkincareProductSalesSystem.Repositories.Paginate;
+﻿using SkincareProductSalesSystem.Repositories.Models;
 using SkincareProductSalesSystem.Repositories.Repositories;
 using SkincareProductSalesSystem.Services.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace SkincareProductSalesSystem.Services
 {
+    public class CreateBrandRequest
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string ImageUrl { get; set; }
+        public string Status { get; set; }
+    }
+    public class UpdateBrandRequest : CreateBrandRequest
+    {
+        public string BrandId { get; set; }
+    }
     public interface IBrandService
     {
         Task<IServiceResult> GetPaginate(int page, int size);
         Task<IServiceResult> GetBrandById(string id);
         Task<IServiceResult> GetBrandByName(int page, int size, string name);
-        Task<IServiceResult> CreateBrand(Brand brand);
-        Task<IServiceResult> UpdateBrand(Brand brand);
+        Task<IServiceResult> CreateBrand(CreateBrandRequest request);
+        Task<IServiceResult> UpdateBrand(UpdateBrandRequest request);
         Task<IServiceResult> DeleteBrand(string id);
     }
     public class BrandServices : IBrandService
@@ -29,16 +34,10 @@ namespace SkincareProductSalesSystem.Services
             _brandRepository = brandRepository;
         }
 
-        //public async Task<IPaginate<Brand>> GetPaginate(int page, int size)
-        //{
-        //    return await _brandRepository.GetPagingListAsync(
-        //            page: page,
-        //            size: size
-        //        );
-        //}
         public async Task<IServiceResult> GetPaginate(int page, int size)
         {
             var response = await _brandRepository.GetPagingListAsync(
+                    predicate: b => b.Status == "Active",
                     page: page,
                     size: size
                 );
@@ -49,26 +48,18 @@ namespace SkincareProductSalesSystem.Services
                 Data = response
             };
         }
-        //public async Task<Brand?> GetBrandById(string id)
-        //{
-        //    return await _brandRepository.GetByIdAsync(id);
-        //}
 
         public async Task<IServiceResult> GetBrandById(string id)
         {
-            var response = await _brandRepository.GetByIdAsync(id);
+            var brand = await _brandRepository.GetByIdAsync(id);
+            if (brand == null) return new ServiceResult(404, "Không tìm thấy nhãn hàng");
             return new ServiceResult
             {
                 Status = 200,
                 Message = "",
-                Data = response
+                Data = brand
             };
         }
-
-        //public async Task<IEnumerable<Brand>> GetBrandByName(int page, int size, string name)
-        //{
-        //    return await _brandRepository.GetBrandsByName(page, size, name);
-        //}
 
         public async Task<IServiceResult> GetBrandByName(int page, int size, string name)
         {
@@ -81,67 +72,53 @@ namespace SkincareProductSalesSystem.Services
             };
         }
 
-        //public async Task<Brand?> CreateBrand(Brand brand)
-        //{
-        //    return (await _brandRepository.CreateAsync(brand) > 0)? brand : null;
-        //}
-
-        public async Task<IServiceResult> CreateBrand(Brand brand)
+        public async Task<IServiceResult> CreateBrand(CreateBrandRequest request)
         {
-            var response = await _brandRepository.CreateAsync(brand);
-            return (response > 0) ? (new ServiceResult
+            var newBrand = new Brand
+            {
+                BrandId = Guid.NewGuid().ToString(),
+                Name = request.Name,
+                Description = request.Description,
+                ImageUrl = request.ImageUrl,
+                Status = request.Status,
+                CreatedAt = DateTime.Now,
+            };
+            var response = await _brandRepository.CreateAsync(newBrand);
+            return new ServiceResult
             {
                 Status = 200,
-                Message = "Tạo thành công",
+                Message = "Thành công",
                 Data = response
-            }) :
-            new ServiceResult
-            {
-                Status = 501,
-                Message = "Tạo thất bại",
             };
         }
 
-        //public async Task<Brand?> UpdateBrand(Brand brand)
-        //{
-        //    return (await _brandRepository.UpdateAsync(brand) > 0)? brand : null;
-        //}
-        public async Task<IServiceResult> UpdateBrand(Brand brand)
+        public async Task<IServiceResult> UpdateBrand(UpdateBrandRequest request)
         {
-            var response = await _brandRepository.UpdateAsync(brand);
-            return (response > 0) ? (new ServiceResult
+            var updateBrand = await _brandRepository.GetByIdAsync(request.BrandId);
+            if (updateBrand == null) return new ServiceResult(404, "Không tìm thấy nhãn hàng");
+
+            await _brandRepository.UpdateAsync(updateBrand);
+            return new ServiceResult
             {
                 Status = 200,
-                Message = "Cập nhật thành công",
-                Data = response
-            }) :
-            new ServiceResult
-            {
-                Status = 501,
-                Message = "Cập nhật thất bại",
+                Message = "Thành công",
+                Data = updateBrand
             };
+
         }
 
-        //public async Task<Brand?> DeleteBrand(string id)
-        //{
-        //    var brand = await _brandRepository.GetByIdAsync(id);
-        //    return (await _brandRepository.RemoveAsync(brand))? brand : null;
-        //}
+
         public async Task<IServiceResult> DeleteBrand(string id)
         {
             var brand = await _brandRepository.GetByIdAsync(id);
-            var reponse = await _brandRepository.RemoveAsync(brand);
-            return (reponse) ? (new ServiceResult
+            await _brandRepository.RemoveAsync(brand);
+            return new ServiceResult
             {
                 Status = 200,
-                Message = "Cập nhật thành công",
+                Message = "Thành công",
                 Data = brand
-            }) :
-            new ServiceResult
-            {
-                Status = 501,
-                Message = "Cập nhật thất bại",
             };
+            
         }
     }
 }
