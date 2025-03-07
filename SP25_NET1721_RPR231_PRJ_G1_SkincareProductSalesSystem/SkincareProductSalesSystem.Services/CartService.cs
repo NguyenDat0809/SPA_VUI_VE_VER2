@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using SkincareProductSalesSystem.Services.Base;
 
@@ -6,9 +7,20 @@ using SkincareProductSalesSystem.Services.Base;
 
 namespace SkincareProductSalesSystem.Services.ExtendServices
 {
+    public class AddToCartRequest
+    {
+        [Required]
+        public string ProductId { get; set; }
+        public int Quantity { get; set; }
+    }
+    public class UpdateToCartRequest : AddToCartRequest
+    {
+        
+    }
+
     public interface ICartService
     {
-        Task<IServiceResult> AddToCartAsync(string productId);
+        Task<IServiceResult> AddOrUpdateToCartAsync(AddToCartRequest request);
         Task<IServiceResult> RemoveFromCartAsync(string productId);
         Task<IServiceResult> GetUserCartAsync();
     }
@@ -35,22 +47,27 @@ namespace SkincareProductSalesSystem.Services.ExtendServices
             return userId;
         }
 
-        public async Task<IServiceResult> AddToCartAsync(string productId)
+        public async Task<IServiceResult> AddOrUpdateToCartAsync(AddToCartRequest request)
         {
             try
             {
                 string userId = GetUserId();
                 string key = $"cart:{userId}";
 
-                var cart = await _cacheService.GetDataAsync<List<string>>(key) ?? new List<string>();
+                var cart = await _cacheService.GetDataAsync<Dictionary<string, int>>(key) ?? new Dictionary<string, int>();
                 if(cart.Count >= LIMIT_CART_COUNT)
                     return new ServiceResult(403, "Giỏ hàng đã đạt giới hạn 100");
 
-                if (!cart.Contains(productId))
+                if (cart.TryGetValue(request.ProductId, out int quantity))
                 {
-                    cart.Add(productId);
-                    await _cacheService.SetDataAsync(key, cart);
+                    cart[request.ProductId] = request.Quantity; 
                 }
+                else
+                {
+                    cart.Add(request.ProductId, request.Quantity); 
+                }
+                await _cacheService.SetDataAsync(key, cart);
+
                 return new ServiceResult(200, "Thành công", cart);
             }
             catch (UnauthorizedAccessException e)
@@ -59,6 +76,7 @@ namespace SkincareProductSalesSystem.Services.ExtendServices
             }
 
         }
+       
 
         public async Task<IServiceResult> RemoveFromCartAsync(string productId)
         {
