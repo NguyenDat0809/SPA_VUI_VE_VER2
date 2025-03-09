@@ -34,7 +34,7 @@ builder.Services.AddScoped<IChatBotService, ChatBotService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IPromotionUsageService, PromotionUsageService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
-builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IUserAccountService, UserService>();
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<JwtHelper>();
 builder.Services.AddSingleton<FirebaseAuth>(_ =>

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SkincareProductSalesSystem.Services
 {
 
-    public interface IUserAccountService
+    public interface IUserService
     {
         Task<User> CreateViaFirebase(UserRecord record);
         Task<User> GetUserAsync(string id);
@@ -19,11 +19,11 @@ namespace SkincareProductSalesSystem.Services
         Task<IServiceResult> Delete(string id);
     }
 
-    public class UserAccountService : IUserAccountService
+    public class UserService : IUserService
     {
         private UnitOfWork _unitOfWork;
 
-        public UserAccountService()
+        public UserService()
         {
             _unitOfWork ??= new UnitOfWork();
         }
