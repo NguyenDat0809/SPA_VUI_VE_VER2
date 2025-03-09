@@ -34,7 +34,6 @@ builder.Services.AddScoped<IChatBotService, ChatBotService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IPromotionUsageService, PromotionUsageService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
-builder.Services.AddScoped<IUserAccountService, UserService>();
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<JwtHelper>();
 builder.Services.AddSingleton<FirebaseAuth>(_ =>
@@ -88,7 +87,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         return;
                     }
                     // Get UserService from DI Container
-                    var userService = context.HttpContext.RequestServices.GetRequiredService<IUserAccountService>();
+                    var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
 
                     //Check user
                     User user = await userService.GetUserAsync(firebaseUser.Uid);

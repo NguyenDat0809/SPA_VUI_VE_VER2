@@ -57,7 +57,7 @@ public partial class SP25_NET1721_RPR231_PRJ_G1_SkincareProductSalesSystemDBCont
 
     public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<UserAccount> UserAccount { get; set; }
+    
 
     public static string GetConnectionString(string connectionStringName)
     {
@@ -673,13 +673,7 @@ public partial class SP25_NET1721_RPR231_PRJ_G1_SkincareProductSalesSystemDBCont
                 .IsRequired()
                 .HasMaxLength(50);
         });
-        modelBuilder.Entity<UserAccount>(entity =>
-        {
-            entity.HasKey(e => e.UserAccountId);
-            entity.Property(e => e.UserName).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
-
-        });
+      
         OnModelCreatingPartial(modelBuilder);
     }
 

@@ -7,9 +7,9 @@ namespace SkincarecategoriesalesSystem.Api.Controllers
     [ApiController]
     public class UserAccountController : ControllerBase
     {
-        private readonly IUserAccountService _userAccountService;
+        private readonly IUserService _userAccountService;
 
-        public UserAccountController(IUserAccountService userAccountService)
+        public UserAccountController(IUserService userAccountService)
         {
             _userAccountService = userAccountService;
         }
