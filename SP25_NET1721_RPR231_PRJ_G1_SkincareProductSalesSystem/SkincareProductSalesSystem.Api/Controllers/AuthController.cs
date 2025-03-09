@@ -11,7 +11,8 @@ namespace SkincareProductSalesSystem.Api.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class AuthController : ControllerBase
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public class AuthController : ControllerBase
 	{
 		private IAuthService _authService;
 

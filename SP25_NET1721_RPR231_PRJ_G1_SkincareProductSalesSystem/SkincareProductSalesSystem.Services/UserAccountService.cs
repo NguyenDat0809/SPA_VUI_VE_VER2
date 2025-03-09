@@ -1,43 +1,22 @@
-﻿using SkincareProductSalesSystem.Repositories;
+﻿using FirebaseAdmin.Auth;
+using SkincareProductSalesSystem.Repositories;
 using SkincareProductSalesSystem.Repositories.Models;
 using SkincareProductSalesSystem.Services.Base;
 using System;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SkincareProductSalesSystem.Services
 {
-    public class CreateUserAccountRequest
-    {
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public string FullName { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string EmployeeCode { get; set; }
-        public int RoleId { get; set; }
-        public string RequestCode { get; set; }
-        public string ApplicationCode { get; set; }
-        public bool IsActive { get; set; }
-    }
-
-    public class UpdateUserAccountRequest
-    {
-        public string FullName { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string EmployeeCode { get; set; }
-        public int RoleId { get; set; }
-        public string ApplicationCode { get; set; }
-        public bool IsActive { get; set; }
-    }
 
     public interface IUserAccountService
     {
+        Task<User> CreateViaFirebase(UserRecord record);
+        Task<User> GetUserAsync(string id);
         Task<IServiceResult> GetAllAsync(int page, int size);
-        Task<IServiceResult> GetAsync(int id);
-        Task<IServiceResult> Create(CreateUserAccountRequest request);
-        Task<IServiceResult> Update(int id, UpdateUserAccountRequest request);
-        Task<IServiceResult> Delete(int id);
+        Task<IServiceResult> GetAsync(string id);
+        Task<IServiceResult> Delete(string id);
     }
 
     public class UserAccountService : IUserAccountService
@@ -49,40 +28,34 @@ namespace SkincareProductSalesSystem.Services
             _unitOfWork ??= new UnitOfWork();
         }
 
-        public async Task<IServiceResult> Create(CreateUserAccountRequest request)
+        public async Task<User> CreateViaFirebase(UserRecord record)
         {
-            var userAccount = new UserAccount
+            var user = new User
             {
-                UserName = request.UserName,
-                Password = request.Password,
-                FullName = request.FullName,
-                Email = request.Email,
-                Phone = request.Phone,
-                EmployeeCode = request.EmployeeCode,
-                RoleId = request.RoleId,
-                RequestCode = request.RequestCode,
-                ApplicationCode = request.ApplicationCode,
-                IsActive = request.IsActive,
-                CreatedDate = DateTime.Now,
-                CreatedBy = "System"
+                UserId = record.Uid,
+                Username = record.Email,
+                PasswordHash = string.Empty,
+                PasswordSalt = string.Empty,
+                FullName = record.DisplayName,
+                Email = record.Email,
+                PhoneNumber = record.PhoneNumber,
+                Avatar = record.PhotoUrl,
+                RoleName = "Customer",
+                IsEmailVerified = record.EmailVerified,
+                IsPhoneVerified = string.IsNullOrEmpty(record.PhoneNumber),
+                IsActive = true,
+                CreatedAt = DateTime.Now,
             };
-
-            await _unitOfWork.UserAccountRepository.CreateAsync(userAccount);
-
-            return new ServiceResult
-            {
-                Status = 200,
-                Message = "Thành công",
-                Data = userAccount,
-            };
+            await _unitOfWork.UserRepository.CreateAsync(user);
+            return user;
         }
 
-        public async Task<IServiceResult> Delete(int id)
+        public async Task<IServiceResult> Delete(string id)
         {
-            var userAccount = await _unitOfWork.UserAccountRepository.GetByIdAsync(id);
+            var userAccount = await _unitOfWork.UserRepository.GetByIdAsync(id);
             if (userAccount == null) return new ServiceResult(404, "Không tìm thấy");
 
-            await _unitOfWork.UserAccountRepository.RemoveAsync(userAccount);
+            await _unitOfWork.UserRepository.RemoveAsync(userAccount);
 
             return new ServiceResult
             {
@@ -94,7 +67,7 @@ namespace SkincareProductSalesSystem.Services
 
         public async Task<IServiceResult> GetAllAsync(int page, int size)
         {
-            var userAccounts = await _unitOfWork.UserAccountRepository.GetPagingListAsync(page: page, size: size);
+            var userAccounts = await _unitOfWork.UserRepository.GetPagingListAsync(page: page, size: size);
             return new ServiceResult
             {
                 Status = 200,
@@ -103,9 +76,9 @@ namespace SkincareProductSalesSystem.Services
             };
         }
 
-        public async Task<IServiceResult> GetAsync(int id)
+        public async Task<IServiceResult> GetAsync(string id)
         {
-            var userAccount = await _unitOfWork.UserAccountRepository.GetByIdAsync(id);
+            var userAccount = await _unitOfWork.UserRepository.GetByIdAsync(id);
             if (userAccount == null) return new ServiceResult(404, "Không tìm thấy");
             return new ServiceResult
             {
@@ -114,31 +87,10 @@ namespace SkincareProductSalesSystem.Services
                 Data = userAccount
             };
         }
-
-        public async Task<IServiceResult> Update(int id, UpdateUserAccountRequest request)
+        public async Task<User> GetUserAsync(string id)
         {
-            var userAccount = await _unitOfWork.UserAccountRepository.GetByIdAsync(id);
-
-            if (userAccount == null) return new ServiceResult(404, "Không tìm thấy");
-
-            userAccount.FullName = request.FullName;
-            userAccount.Email = request.Email;
-            userAccount.Phone = request.Phone;
-            userAccount.EmployeeCode = request.EmployeeCode;
-            userAccount.RoleId = request.RoleId;
-            userAccount.ApplicationCode = request.ApplicationCode;
-            userAccount.IsActive = request.IsActive;
-            userAccount.ModifiedDate = DateTime.Now;
-            userAccount.ModifiedBy = "System";
-
-            await _unitOfWork.UserAccountRepository.UpdateAsync(userAccount);
-
-            return new ServiceResult
-            {
-                Status = 200,
-                Message = "Thành công",
-                Data = userAccount
-            };
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+            return user;
         }
     }
 }

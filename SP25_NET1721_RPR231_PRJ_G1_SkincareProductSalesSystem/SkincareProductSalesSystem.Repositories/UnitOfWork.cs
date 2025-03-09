@@ -25,7 +25,7 @@ namespace SkincareProductSalesSystem.Repositories
         private SkinTestOptionRepository skinTestOptionRepository;
         private SkinTypeRepository skinTypeRepository;
         private UserRepository userRepository;
-        private UserAccountRepository userAccountRepository;
+
 
         public UnitOfWork()
         {
@@ -52,6 +52,5 @@ namespace SkincareProductSalesSystem.Repositories
 
         public SkinTypeRepository SkinTypeRepository { get { return skinTypeRepository ??= new SkinTypeRepository(); } }
         public UserRepository UserRepository { get { return userRepository ??= new UserRepository(); } }
-        public UserAccountRepository UserAccountRepository { get { return userAccountRepository ??= new UserAccountRepository(); } }
     }
 }

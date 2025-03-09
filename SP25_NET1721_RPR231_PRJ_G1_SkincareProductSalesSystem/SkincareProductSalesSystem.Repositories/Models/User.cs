@@ -10,7 +10,7 @@ namespace SkincareProductSalesSystem.Repositories.Models;
 public partial class User
 {
 	[Key]
-	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+	//[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public string UserId { get; set; }
 
     public string Username { get; set; }
