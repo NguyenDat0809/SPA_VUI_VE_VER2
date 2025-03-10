@@ -13,6 +13,7 @@ using FirebaseAdmin.Auth;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using SkincareProductSalesSystem.Repositories.Models;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +35,8 @@ builder.Services.AddScoped<IChatBotService, ChatBotService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IPromotionUsageService, PromotionUsageService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
-builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<JwtHelper>();
@@ -104,16 +106,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         .ToList();
 
                     // Add role to claims
-                    claims.Add(new System.Security.Claims.Claim("role", user.RoleName));
+                    claims.Add(new System.Security.Claims.Claim(ClaimTypes.Role, user.RoleName));
 
                     context.Principal = new System.Security.Claims.ClaimsPrincipal(
                         new System.Security.Claims.ClaimsIdentity(claims, "Firebase"));
 
                     context.Success();
                 }
-                catch (Exception ex)
+                catch (UnauthorizedAccessException ex)
                 {
                     context.Fail($"Firebase authentication failed: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 }
             }
         };

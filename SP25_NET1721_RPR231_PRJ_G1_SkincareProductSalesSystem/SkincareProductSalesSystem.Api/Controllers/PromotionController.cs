@@ -7,7 +7,7 @@ using SkincareProductSalesSystem.Services;
 
 namespace SkincareProductSalesSystem.Api.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("api/promotions")]
 	[ApiController]
 	public class PromotionController : ControllerBase
 	{
@@ -41,6 +41,7 @@ namespace SkincareProductSalesSystem.Api.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Roles = "Customer")]
 		public async Task<IActionResult> Get()
 		{
 			try
