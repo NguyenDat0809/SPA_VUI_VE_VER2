@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using SkincareProductSalesSystem.Repositories;
 using SkincareProductSalesSystem.Repositories.Models;
 using SkincareProductSalesSystem.Repositories.Repositories;
 using SkincareProductSalesSystem.Services.Base;
@@ -28,16 +29,16 @@ namespace SkincareProductSalesSystem.Services
     }
     public class BrandServices : IBrandService
     {
-        private readonly BrandRepository _brandRepository;
+        private readonly UnitOfWork _unitOfWork;
 
-        public BrandServices(BrandRepository brandRepository)
+        public BrandServices(UnitOfWork unitOfWork)
         {
-            _brandRepository = brandRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IServiceResult> GetPaginate(int page, int size)
         {
-            var response = await _brandRepository.GetPagingListAsync(
+            var response = await _unitOfWork.BrandRepository.GetPagingListAsync(
                     predicate: b => b.Status == "Active",
                     page: page,
                     size: size
@@ -52,7 +53,7 @@ namespace SkincareProductSalesSystem.Services
 
         public async Task<IServiceResult> GetBrandById(string id)
         {
-            var brand = await _brandRepository.GetByIdAsync(id);
+            var brand = await _unitOfWork.BrandRepository.GetByIdAsync(id);
             if (brand == null) return new ServiceResult(404, "Không tìm thấy nhãn hàng");
             return new ServiceResult
             {
@@ -64,7 +65,7 @@ namespace SkincareProductSalesSystem.Services
 
         public async Task<IServiceResult> GetBrandByName(int page, int size, string name)
         {
-            var response = await _brandRepository.GetBrandsByName(page, size, name);
+            var response = await _unitOfWork.BrandRepository.GetBrandsByName(page, size, name);
             return new ServiceResult
             {
                 Status = 200,
@@ -84,7 +85,7 @@ namespace SkincareProductSalesSystem.Services
                 Status = request.Status,
                 CreatedAt = DateTime.Now,
             };
-            var response = await _brandRepository.CreateAsync(newBrand);
+            var response = await _unitOfWork.BrandRepository.CreateAsync(newBrand);
             return new ServiceResult
             {
                 Status = 200,
@@ -95,10 +96,10 @@ namespace SkincareProductSalesSystem.Services
 
         public async Task<IServiceResult> UpdateBrand(UpdateBrandRequest request)
         {
-            var updateBrand = await _brandRepository.GetByIdAsync(request.BrandId);
+            var updateBrand = await _unitOfWork.BrandRepository.GetByIdAsync(request.BrandId);
             if (updateBrand == null) return new ServiceResult(404, "Không tìm thấy nhãn hàng");
 
-            await _brandRepository.UpdateAsync(updateBrand);
+            await _unitOfWork.BrandRepository.UpdateAsync(updateBrand);
             return new ServiceResult
             {
                 Status = 200,
@@ -111,8 +112,8 @@ namespace SkincareProductSalesSystem.Services
 
         public async Task<IServiceResult> DeleteBrand(string id)
         {
-            var brand = await _brandRepository.GetByIdAsync(id);
-            await _brandRepository.RemoveAsync(brand);
+            var brand = await _unitOfWork.BrandRepository.GetByIdAsync(id);
+            await _unitOfWork.BrandRepository.RemoveAsync(brand);
             return new ServiceResult
             {
                 Status = 200,

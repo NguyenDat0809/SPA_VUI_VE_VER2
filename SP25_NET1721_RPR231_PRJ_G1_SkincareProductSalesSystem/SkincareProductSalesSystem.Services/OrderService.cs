@@ -11,20 +11,20 @@ using System.Threading.Tasks;
 
 namespace SkincareProductSalesSystem.Services
 {
-    public interface IOrderServices
+    public interface IOrderService
     {
         Task<ServiceResult> GetPagination(int page, int size);
         Task<ServiceResult?> GetOrderById(string id);
         Task<ServiceResult?> CreateOrder();
         Task<ServiceResult?> UpdateOrder(Order order);
     }
-    public class OrderServices : IOrderServices
+    public class OrderService : IOrderService
     {
         private readonly UnitOfWork _unitOfWork;
 
-        public OrderServices(OrderRepository orderRepository)
+        public OrderService(UnitOfWork unitOfWork)
         {
-            _unitOfWork ??= new UnitOfWork();
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ServiceResult?> CreateOrder()

@@ -9,9 +9,9 @@ namespace SkincareProductSalesSystem.Api.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly IOrderServices _orderServices;
+        private readonly IOrderService _orderServices;
 
-        public OrderController(IOrderServices orderServices)
+        public OrderController(IOrderService orderServices)
         {
             _orderServices = orderServices;
         }
