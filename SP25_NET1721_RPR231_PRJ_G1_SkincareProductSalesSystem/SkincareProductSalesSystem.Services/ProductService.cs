@@ -62,6 +62,7 @@ namespace SkincareProductSalesSystem.Services
         public int Page { get; set; } = 1;
         public int Size { get; set; } = 10;
         public string? Category { get; set; }
+        public string? Brand { get; set; }
         public string? FilterBy { get; set; }
         public string? FilterQuery { get; set; }
         public string? SortBy { get; set; }
@@ -136,6 +137,12 @@ namespace SkincareProductSalesSystem.Services
             {
                 Expression<Func<Product, bool>> categoryFilter = x => x.Category.Name == query.Category;
                 predicate = CombineExpressions(predicate, categoryFilter);
+            }
+
+            if (!query.Brand.IsNullOrEmpty())
+            {
+                Expression<Func<Product, bool>> brandFilter = x => x.Brand.Name == query.Brand;
+                predicate = CombineExpressions(predicate, brandFilter);
             }
 
             if (!string.IsNullOrEmpty(query.FilterBy) && !string.IsNullOrEmpty(query.FilterQuery))
