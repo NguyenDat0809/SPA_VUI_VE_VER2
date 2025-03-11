@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using SkincareProductSalesSystem.Repositories.Models;
+using SkincareProductSalesSystem.Repositories;
 using SkincareProductSalesSystem.Services.Base;
 
 
@@ -29,12 +31,14 @@ namespace SkincareProductSalesSystem.Services.ExtendServices
     public class CartService : ICartService
     {
         private readonly ICacheService _cacheService;
+        private readonly UnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private int LIMIT_CART_COUNT = 100;
-        public CartService(ICacheService cacheService, IHttpContextAccessor httpContextAccessor)
+        public CartService(ICacheService cacheService, IHttpContextAccessor httpContextAccessor, UnitOfWork unitOfWork)
         {
             _cacheService = cacheService;
             _httpContextAccessor = httpContextAccessor;
+            _unitOfWork = unitOfWork;
         }
 
         private string GetUserId()
@@ -105,12 +109,27 @@ namespace SkincareProductSalesSystem.Services.ExtendServices
             {
                 string userId = GetUserId();
                 string key = $"cart:{userId}";
-                var cartData = await _cacheService.GetDataAsync<List<string>>(key) ?? new List<string>();
+                var cartData = await _cacheService.GetDataAsync<Dictionary<string, int>>(key) ??
+                               new Dictionary<string, int>();
+
+                var products = new List<Product>();
+
+                foreach (var productId in cartData.Keys.Select(id => id).ToList())
+                {
+                    products.Add(await _unitOfWork.ProductRepository.GetByIdAsync(productId));
+                }
+
+                var result = products.Select(p => new
+                {
+                    Product = p,
+                    Quantity = cartData[p.ProductId.ToString()]
+                }).ToList();
+
                 return new ServiceResult
                 {
                     Status = 200,
                     Message = "Thành công",
-                    Data = cartData
+                    Data = result
                 };
             }
             catch (UnauthorizedAccessException e)
