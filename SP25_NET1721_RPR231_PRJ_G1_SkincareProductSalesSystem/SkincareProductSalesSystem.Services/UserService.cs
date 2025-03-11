@@ -42,7 +42,7 @@ namespace SkincareProductSalesSystem.Services
                 Avatar = record.PhotoUrl,
                 RoleName = "Customer",
                 IsEmailVerified = record.EmailVerified,
-                IsPhoneVerified = string.IsNullOrEmpty(record.PhoneNumber),
+                IsPhoneVerified = !string.IsNullOrEmpty(record.PhoneNumber),
                 IsActive = true,
                 CreatedAt = DateTime.Now,
             };
