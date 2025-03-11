@@ -8,7 +8,9 @@ namespace SkincareProductSalesSystem.Api.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class PromotionUsageController : ControllerBase
+    [ApiExplorerSettings(IgnoreApi = true)]
+
+    public class PromotionUsageController : ControllerBase
 	{
 		private IPromotionUsageService _promotionUsageService;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SkincareProductSalesSystem.Repositories.Models;
 using SkincareProductSalesSystem.Services;
 
@@ -14,7 +15,7 @@ namespace SkincareProductSalesSystem.Api.Controllers
         {
             _orderDetailServices = orderDetailServices;
         }
-
+        [Authorize(Roles = "Customer,Admin")]
         [HttpGet("/order-details/{orderId}")]
         public async Task<IActionResult> GetOrderDetailsByOrderId(string orderId, [FromQuery] int page = 1, [FromQuery] int size = 10)
         {
@@ -25,7 +26,7 @@ namespace SkincareProductSalesSystem.Api.Controllers
                 );
             return (responses != null)? Ok(responses) : StatusCode(500);
         }
-
+        [Authorize(Roles = "Customer")]
         [HttpPost("/order-details")]
         public async Task<IActionResult> CreateOrderDetail(string orderId, int quanity, Product product)
         {
@@ -44,7 +45,7 @@ namespace SkincareProductSalesSystem.Api.Controllers
             var response = await _orderDetailServices.CreateOrderDetail(orderDetail);
             return (response != null)? Ok(response) : StatusCode(300);
         }
-
+        [Authorize(Roles = "Customer,Admin")]
         [HttpPatch("/order-details")]
         public async Task<IActionResult> UpdateOrderDetail(OrderDetail orderDetail)
         {

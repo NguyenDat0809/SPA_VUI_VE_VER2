@@ -6,6 +6,7 @@ namespace SkincareProductSalesSystem.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentServices _paymentService;

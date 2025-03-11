@@ -17,8 +17,8 @@ namespace SkincareProductSalesSystem.Api.Controllers
 		{
 			_promotionService = promotionService;
 		}
-
-		[HttpPost]
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
 		public async Task<IActionResult> Create(CreatePromotionRequest model)
 		{
 			try
@@ -41,7 +41,7 @@ namespace SkincareProductSalesSystem.Api.Controllers
 		}
 
 		[HttpGet]
-		[Authorize(Roles = "Customer")]
+		[Authorize(Roles = "Customer,Admin")]
 		public async Task<IActionResult> Get()
 		{
 			try
@@ -60,8 +60,9 @@ namespace SkincareProductSalesSystem.Api.Controllers
 			}
 		}
 
+        [Authorize(Roles = "Customer,Admin")]
 		[HttpGet("{page}/{size}")]
-		public async Task<IActionResult> Get(int page = 1, int size = 10)
+        public async Task<IActionResult> Get(int page = 1, int size = 10)
 		{
 			try
 			{
@@ -78,7 +79,7 @@ namespace SkincareProductSalesSystem.Api.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
-
+		[Authorize(Roles = "Customer")]
 		[HttpGet("{id}")]
 		public async Task<IActionResult> Get(string id)
 		{
@@ -97,8 +98,8 @@ namespace SkincareProductSalesSystem.Api.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
-
-		[HttpDelete]
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
 		public async Task<IActionResult> Delete(DeletePromotionRequest model)
 		{
 			try
@@ -120,8 +121,8 @@ namespace SkincareProductSalesSystem.Api.Controllers
 				return StatusCode(500, ex.Message);
 			}
 		}
-
-		[HttpPut]
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
 		public async Task<IActionResult> Update(UpdatePromotionRequest model)
 		{
 			try

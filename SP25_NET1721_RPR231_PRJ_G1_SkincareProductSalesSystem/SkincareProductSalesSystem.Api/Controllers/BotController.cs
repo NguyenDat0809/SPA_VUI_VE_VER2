@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SkincareProductSalesSystem.Services;
 
 namespace SkincareProductSalesSystem.Api.Controllers
@@ -14,6 +15,7 @@ namespace SkincareProductSalesSystem.Api.Controllers
             _chatBotService = chatBotService;
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpGet("/bot/chat")]
         public async Task<IActionResult> GetAll(string prompt)
         {

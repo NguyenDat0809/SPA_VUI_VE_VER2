@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SkincareProductSalesSystem.Services;
 
@@ -14,14 +15,14 @@ namespace SkincareProductSalesSystem.Api.Controllers
         {
             _productService = productService;
         }
-
+        [Authorize(Roles = "Customer,Admin")]
         [HttpGet("/products")]
         public async Task<IActionResult> GetAllProduct([FromQuery] GetAllProductQuery query)
         {
             var response = await _productService.GetAllAsync(query);
             return response != null ? Ok(response) : StatusCode(500);
         }
-
+        [Authorize(Roles = "Customer,Admin")]
         [HttpGet("/products/{id}")]
         public async Task<IActionResult> GetProductById([FromRoute] string id)
         {
@@ -29,20 +30,21 @@ namespace SkincareProductSalesSystem.Api.Controllers
             return product != null ? Ok(product) : StatusCode(500);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("/products")]
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductRequest request)
         {
             var response = await _productService.Create(request);
             return response != null ? Ok(response) : StatusCode(500);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("/products/{id}")]
         public async Task<IActionResult> UpdateProduct([FromRoute] string id, [FromForm] UpdateProductRequest request)
         {
             var response = await _productService.Update(id, request);
             return response != null ? Ok(response) : StatusCode(500);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("/products/{id}")]
         public async Task<IActionResult> DeleteProduct([FromRoute] string id)
         {
