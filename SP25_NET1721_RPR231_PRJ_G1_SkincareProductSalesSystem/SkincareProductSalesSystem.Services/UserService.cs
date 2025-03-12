@@ -1,4 +1,5 @@
 ﻿using FirebaseAdmin.Auth;
+using Microsoft.AspNetCore.Http;
 using SkincareProductSalesSystem.Repositories;
 using SkincareProductSalesSystem.Repositories.Models;
 using SkincareProductSalesSystem.Services.Base;
@@ -17,15 +18,18 @@ namespace SkincareProductSalesSystem.Services
         Task<IServiceResult> GetAllAsync(int page, int size);
         Task<IServiceResult> GetAsync(string id);
         Task<IServiceResult> Delete(string id);
+        Task<IServiceResult> GetCustomerProfile();
     }
 
     public class UserService : IUserService
     {
         private UnitOfWork _unitOfWork;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService()
+        public UserService(IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork ??= new UnitOfWork();
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<User> CreateViaFirebase(UserRecord record)
@@ -87,10 +91,25 @@ namespace SkincareProductSalesSystem.Services
                 Data = userAccount
             };
         }
+
         public async Task<User> GetUserAsync(string id)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
             return user;
         }
-    }
+        public async Task<IServiceResult> GetCustomerProfile()
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst("user_id").Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new ServiceResult(401, "Không có quyền");
+            }
+            var profiles = await _unitOfWork.CustomerProfileRepository.GetProfileByUserId(userId);
+            return new ServiceResult
+            {
+                Status = 200,
+                Message = "Thành công",
+                Data = profiles
+            };
+        }
 }
