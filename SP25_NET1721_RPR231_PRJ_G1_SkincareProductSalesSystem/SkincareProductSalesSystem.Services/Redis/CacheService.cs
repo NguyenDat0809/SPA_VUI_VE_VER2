@@ -10,7 +10,7 @@ namespace SkincareProductSalesSystem.Services.ExtendServices
         private IDatabase _cacheDb;
         public CacheService() 
         {
-            var redis = ConnectionMultiplexer.Connect("localhost:6379");
+            var redis = ConnectionMultiplexer.Connect("redis-16060.c321.us-east-1-2.ec2.redns.redis-cloud.com:16060,password=JeHRL3CpEV1vfKOkl7n5MPhG8RQE6LDL,abortConnect=false");
             _cacheDb = redis.GetDatabase();
         }
 

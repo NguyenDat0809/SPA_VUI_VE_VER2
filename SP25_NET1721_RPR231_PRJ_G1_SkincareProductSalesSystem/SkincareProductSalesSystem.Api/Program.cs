@@ -19,10 +19,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 //App Services
 builder.Services.AddGrpc();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<SP25_NET1721_RPR231_PRJ_G1_SkincareProductSalesSystemDBContext>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderDetailServices, OrderDetailServices>();
@@ -36,7 +39,6 @@ builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IPromotionUsageService, PromotionUsageService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IUserService, UserService>();
-
 
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<JwtHelper>();
