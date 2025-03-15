@@ -7,7 +7,7 @@ using SkincareProductSalesSystem.Services;
 
 namespace SkincareProductSalesSystem.Api.Controllers
 {
-	[Route("api/promotions")]
+	[Route("promotions")]
 	[ApiController]
 	public class PromotionController : ControllerBase
 	{

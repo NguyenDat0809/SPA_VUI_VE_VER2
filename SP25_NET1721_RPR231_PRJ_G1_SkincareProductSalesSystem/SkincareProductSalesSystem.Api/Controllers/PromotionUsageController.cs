@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SkincareProductSalesSystem.Api.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("[controller]")]
 	[ApiController]
     [ApiExplorerSettings(IgnoreApi = true)]
 

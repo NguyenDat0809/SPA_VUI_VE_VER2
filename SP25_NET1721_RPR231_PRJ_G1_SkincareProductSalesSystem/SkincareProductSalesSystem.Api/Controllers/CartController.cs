@@ -15,7 +15,7 @@ namespace SkincareProductSalesSystem.Api.Controllers
             _cartService = cartService;
         }
         [Authorize(Roles = "Customer")]
-        [HttpGet("cart")]
+        [HttpGet("/cart")]
         public async Task<IActionResult> GetAll()
         {
             var responses = await _cartService.GetUserCartAsync();
@@ -23,14 +23,14 @@ namespace SkincareProductSalesSystem.Api.Controllers
         }
 
         [Authorize(Roles = "Customer")]
-        [HttpPost("cart")]
+        [HttpPost("/cart")]
         public async Task<IActionResult> AddToCart(AddToCartRequest request)
         {
             var responses = await _cartService.AddOrUpdateToCartAsync(request);
             return StatusCode(responses.Status, responses);
         }
         [Authorize(Roles = "Customer")]
-        [HttpPatch("cart")]
+        [HttpPatch("/cart")]
         public async Task<IActionResult> UpdateToCart(UpdateToCartRequest request)
         {
             var responses = await _cartService.AddOrUpdateToCartAsync(request);
@@ -38,7 +38,7 @@ namespace SkincareProductSalesSystem.Api.Controllers
         }
 
         [Authorize(Roles = "Customer")]
-        [HttpDelete("cart/product/{id}")]
+        [HttpDelete("/cart/product/{id}")]
         public async Task<IActionResult> RemoveFromCart(string id)
         {
             var responses = await _cartService.RemoveFromCartAsync(id);
