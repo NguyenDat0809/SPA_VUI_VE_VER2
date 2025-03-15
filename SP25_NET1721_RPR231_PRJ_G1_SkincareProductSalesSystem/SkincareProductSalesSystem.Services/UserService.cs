@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace SkincareProductSalesSystem.Services
 {
-
     public interface IUserService
     {
         Task<User> CreateViaFirebase(UserRecord record);
@@ -97,6 +96,7 @@ namespace SkincareProductSalesSystem.Services
             var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
             return user;
         }
+
         public async Task<IServiceResult> GetCustomerProfile()
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirst("user_id").Value;
@@ -104,6 +104,7 @@ namespace SkincareProductSalesSystem.Services
             {
                 return new ServiceResult(401, "Không có quyền");
             }
+
             var profiles = await _unitOfWork.CustomerProfileRepository.GetProfileByUserId(userId);
             return new ServiceResult
             {
