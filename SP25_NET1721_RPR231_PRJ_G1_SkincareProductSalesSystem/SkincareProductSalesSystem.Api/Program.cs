@@ -14,6 +14,7 @@ using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using SkincareProductSalesSystem.Repositories.Models;
 using System.Security.Claims;
+using ProtoBuf.Meta;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -182,21 +183,19 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader();
         });
 });
-
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
-app.UseRouting();
+
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("AllowAll");
 app.MapControllers();
-app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
 app.Run();

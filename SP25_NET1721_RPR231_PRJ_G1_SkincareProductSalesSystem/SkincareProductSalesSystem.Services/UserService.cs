@@ -112,4 +112,5 @@ namespace SkincareProductSalesSystem.Services
                 Data = profiles
             };
         }
+    }
 }
