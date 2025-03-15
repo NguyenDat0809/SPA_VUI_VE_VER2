@@ -66,6 +66,16 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        //options.TokenValidationParameters = new TokenValidationParameters
+        //{
+        //    ValidateIssuer = false,
+        //    ValidateAudience = false,
+        //    ValidateLifetime = true,
+        //    ValidateIssuerSigningKey = false,
+        //    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        //    ValidAudience = builder.Configuration["Jwt:Audience"],
+        //    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        //};
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = async context =>

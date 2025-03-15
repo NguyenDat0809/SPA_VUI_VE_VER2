@@ -43,7 +43,7 @@ namespace SkincareProductSalesSystem.Services.ExtendServices
 
         private string GetUserId()
         {
-            var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue("user_id");
             if (string.IsNullOrEmpty(userId))
             {
                 throw new UnauthorizedAccessException("Người dùng chưa được cấp quyền");
