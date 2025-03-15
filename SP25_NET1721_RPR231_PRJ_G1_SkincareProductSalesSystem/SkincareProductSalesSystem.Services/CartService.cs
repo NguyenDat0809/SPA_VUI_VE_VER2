@@ -89,8 +89,8 @@ namespace SkincareProductSalesSystem.Services.ExtendServices
                 string userId = GetUserId();
                 string key = $"cart:{userId}";
 
-                var cart = await _cacheService.GetDataAsync<List<string>>(key);
-                if (cart == null || !cart.Contains(productId)) return new ServiceResult(400, "Không tìm thấy sản phẩm trong giỏ hàng");
+                var cart = await _cacheService.GetDataAsync<Dictionary<string, int>>(key);
+                if (cart == null || !cart.Keys.Contains(productId)) return new ServiceResult(400, "Không tìm thấy sản phẩm trong giỏ hàng");
 
                 cart.Remove(productId);
                 await _cacheService.SetDataAsync(key, cart);
